@@ -37,11 +37,7 @@ open class DiskFetcher<T : DataConvertible> : Fetcher<T> {
     
     open override func fetch(failure fail: @escaping ((Error?) -> ()), success succeed: @escaping (T.Result) -> ()) {
         self.cancelled = false
-        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: { [weak self] in
-            if let strongSelf = self {
-                strongSelf.privateFetch(failure: fail, success: succeed)
-            }
-        })
+        self.privateFetch(failure: fail, success: succeed)
     }
     
     open override func cancelFetch() {
@@ -59,12 +55,10 @@ open class DiskFetcher<T : DataConvertible> : Fetcher<T> {
         do {
             data = try Data(contentsOf: URL(fileURLWithPath: self.path), options: Data.ReadingOptions())
         } catch {
-            DispatchQueue.main.async {
-                if self.cancelled {
-                    return
-                }
-                fail(error)
+            if self.cancelled {
+                return
             }
+            fail(error)
             return
         }
         
@@ -76,17 +70,13 @@ open class DiskFetcher<T : DataConvertible> : Fetcher<T> {
             let localizedFormat = NSLocalizedString("Failed to convert value from data at path %@", comment: "Error description")
             let description = String(format:localizedFormat, self.path)
             let error = errorWithCode(HanekeGlobals.DiskFetcher.ErrorCode.invalidData.rawValue, description: description)
-            DispatchQueue.main.async {
-                fail(error)
-            }
+            fail(error)
             return
         }
         
-        DispatchQueue.main.async(execute: {
-            if self.cancelled {
-                return
-            }
-            succeed(value)
-        })
+        if self.cancelled {
+            return
+        }
+        succeed(value)
     }
 }
