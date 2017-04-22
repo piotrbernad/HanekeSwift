@@ -231,11 +231,11 @@ open class Cache<T: DataConvertible> where T.Result == T, T : DataRepresentable 
                 let value = T.convertFromData(data)
                 if let value = value {
                     let descompressedValue = self.decompressedImageIfNeeded(value)
-                    DispatchQueue.main.async(execute: {
+//                    DispatchQueue.main.async(execute: {
                         succeed(descompressedValue)
                         let wrapper = ObjectWrapper(value: descompressedValue)
                         memoryCache.setObject(wrapper, forKey: key as AnyObject)
-                    })
+//                    })
                 }
             })
         }
@@ -264,9 +264,9 @@ open class Cache<T: DataConvertible> where T.Result == T, T : DataRepresentable 
                     }
                 }
                 
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     succeed(formatted)
-                }
+//                }
             }
         }
     }
