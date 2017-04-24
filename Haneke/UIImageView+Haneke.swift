@@ -47,7 +47,10 @@ public extension UIImageView {
         if didSetImage { return }
      
         if let placeholder = placeholder {
-            self.image = placeholder
+            DispatchQueue.main.async {
+                self.image = placeholder    
+            }
+            
         }
     }
     
@@ -118,14 +121,21 @@ public extension UIImageView {
     func hnk_setImage(_ image : UIImage, animated : Bool, success succeed : ((UIImage) -> ())?) {
         self.hnk_fetcher = nil
         
-        if let succeed = succeed {
-            succeed(image)
-        } else if animated {
-            UIView.transition(with: self, duration: HanekeGlobals.UIKit.SetImageAnimationDuration, options: .transitionCrossDissolve, animations: {
+        DispatchQueue.main.async {
+            
+            if let succeed = succeed {
+                succeed(image)
+            } else if animated {
+                
+                UIView.transition(with: self, duration: HanekeGlobals.UIKit.SetImageAnimationDuration, options: .transitionCrossDissolve, animations: {
+                    self.image = image
+                }, completion: nil)
+                
+                
+            } else {
+                
                 self.image = image
-            }, completion: nil)
-        } else {
-            self.image = image
+            }
         }
     }
     

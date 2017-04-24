@@ -45,7 +45,10 @@ public extension UIButton {
         if didSetImage { return }
         
         if let placeholder = placeholder {
-            self.setImage(placeholder, for: state)
+            DispatchQueue.main.async {
+                self.setImage(placeholder, for: state)
+            }
+            
         }
     }
     
@@ -104,6 +107,8 @@ public extension UIButton {
     func hnk_setImage(_ image : UIImage, state : UIControlState, animated : Bool, success succeed : ((UIImage) -> ())?) {
         self.hnk_imageFetcher = nil
         
+        DispatchQueue.main.async {
+            
         if let succeed = succeed {
             succeed(image)
         } else if animated {
@@ -112,6 +117,7 @@ public extension UIButton {
                 }, completion: nil)
         } else {
             self.setImage(image, for: state)
+        }
         }
     }
     
@@ -155,8 +161,10 @@ public extension UIButton {
      
         if didSetImage { return }
         
+        DispatchQueue.main.async {
         if let placeholder = placeholder {
             self.setBackgroundImage(placeholder, for: state)
+        }
         }
     }
     
@@ -214,6 +222,7 @@ public extension UIButton {
     func hnk_setBackgroundImage(_ image: UIImage, state: UIControlState, animated: Bool, success succeed: ((UIImage) -> ())?) {
         self.hnk_backgroundImageFetcher = nil
         
+        DispatchQueue.main.async {
         if let succeed = succeed {
             succeed(image)
         } else if animated {
@@ -222,6 +231,7 @@ public extension UIButton {
                 }, completion: nil)
         } else {
             self.setBackgroundImage(image, for: state)
+        }
         }
     }
     
